@@ -24,8 +24,8 @@
     "passport-local": "^1.0.0"
   },
   "devDependencies": {
-    "mocha": "^2.3.4",
-    "chai": "^3.4.1"
+    "chai": "^3.4.1",
+    "mocha": "^2.3.4"
   },
   "directories": {
     "test": "test"
