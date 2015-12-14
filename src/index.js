@@ -54,7 +54,7 @@ module.exports = {
                     if (err) throw err;
                     if (user === false) {
                         ctx.status = 401;
-                        ctx.body = {success: false}
+                        ctx.body = {success: false, error: 'Authentication fails. Unknown tool token.'}
                     } else {
                         yield ctx.login(user);
                         yield next;
