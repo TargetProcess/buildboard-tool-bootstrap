@@ -1,7 +1,6 @@
 {
   "name": "buildboard-tool-bootstrap",
   "version": "1.0.0",
-  "description": "",
   "main": "src/index.js",
   "scripts": {
     "test": "mocha test/**/*.js"
@@ -26,5 +25,17 @@
   },
   "devDependencies": {
     "chai": "^3.4.1"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/buildboard/tool-bootstrap.git"
+  },
+  "bugs": {
+    "url": "https://github.com/buildboard/tool-bootstrap/issues"
+  },
+  "homepage": "https://github.com/buildboard/tool-bootstrap#readme",
+  "description": ""
 }
