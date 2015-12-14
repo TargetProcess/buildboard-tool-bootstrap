@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "src/index.js",
   "scripts": {
-    "test": "mocha test/**/*.js"
+    "test": "mocha --harmony_destructuring test/**/*.js"
   },
   "author": "Taucraft",
   "license": "ISC",
@@ -24,6 +24,7 @@
     "passport-local": "^1.0.0"
   },
   "devDependencies": {
+    "mocha": "^2.3.4",
     "chai": "^3.4.1"
   },
   "directories": {
