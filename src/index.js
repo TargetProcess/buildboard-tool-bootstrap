@@ -12,7 +12,7 @@ module.exports = {
 
 
         var secretKey = config.secret;
-        let toolId = process.env.TOOL_ID;
+        var toolId = process.env.TOOL_ID;
         var toolConfig = _.find(config.tools, tool=>tool.id == toolId);
         mongo = toolConfig.mongo || {};
         var toolUrl = url.parse(toolConfig.url);
