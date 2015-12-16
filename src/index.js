@@ -6,20 +6,19 @@ var Mongo = require('koa-mongo');
 console.log(process.cwd());
 
 module.exports = {
-    bootstrap({ settings, methods }, securedRouterCallback)
+    bootstrap({id, settings, methods }, securedRouterCallback)
     {
         var config = require(process.cwd() + '/../config-' + (process.env.NODE_ENV || 'dev') + '.json');
 
 
         var secretKey = config.secret;
-        var toolId = process.env.TOOL_ID;
-        var toolConfig = _.find(config.tools, tool=>tool.id == toolId);
-        var mongo = _.defaults({host: '127.0.0.1', port: 27017, db: toolId}, toolConfig.mongo || {});
+        var toolConfig = _.find(config.tools, tool=>tool.id == id);
+        var mongo = _.defaults({host: '127.0.0.1', port: 27017, db: id}, toolConfig.mongo || {});
         var toolUrl = url.parse(toolConfig.url);
 
         port = parseInt(toolUrl.port || (toolUrl.protocol == "https:" ? "443" : "80"));
 
-        console.log({toolId, port, mongo, secretKey});
+        console.log({id, port, mongo, secretKey});
         if (!port || !mongo || !secretKey) {
             console.error('Invalid configuration: ');
 
