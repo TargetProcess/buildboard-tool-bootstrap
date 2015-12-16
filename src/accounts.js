@@ -8,9 +8,9 @@ module.exports = function (settings, mongoConfig) {
         setupRoutes(router){
             router
                 .post('/account/validate')
-                .get('/account/:accountToken', checkSystemPassport, getAccount, get)
-                .post('/account/:accountToken', checkSystemPassport, getAccount, createOrUpdate)
-                .delete('/account/:accountToken', checkSystemPassport, getAccount, deleteAccount)
+                .get('/account/:toolToken', checkSystemPassport, getAccount, get)
+                .post('/account/:toolToken', checkSystemPassport, getAccount, createOrUpdate)
+                .delete('/account/:toolToken', checkSystemPassport, getAccount, deleteAccount)
 
         }
     };
@@ -29,10 +29,10 @@ module.exports = function (settings, mongoConfig) {
         this.accountsCollection = this.mongo.db(mongoConfig.db)
             .collection('accounts');
 
-        var accountToken = this.params.accountToken;
+        var toolToken = this.params.toolToken;
 
         this.account = yield this.accountsCollection
-            .find({accountToken})
+            .find({toolToken})
             .limit(1)
             .next();
 
@@ -45,7 +45,7 @@ module.exports = function (settings, mongoConfig) {
             this.body = _.omit(this.account, '_id');
         }
         else {
-            this.body = {result: `Account '${this.params.accountToken}' not found`};
+            this.body = {result: `Account '${this.params.toolToken}' not found`};
             this.status = 404;
         }
     }
@@ -61,10 +61,10 @@ module.exports = function (settings, mongoConfig) {
             this.status = this.account ? 200 : 201;
             var account = _.assign(this.account || {}, {
                 name: this.request.body.name,
-                accountToken: this.params.accountToken,
+                toolToken: this.params.toolToken,
                 config: accountConfig
             });
-            yield this.accountsCollection.updateOne({accountToken: this.params.accountToken},
+            yield this.accountsCollection.updateOne({toolToken: this.params.toolToken},
                 {$set: account},
                 {upsert: !this.account});
             this.body = _.omit(account, '_id');
@@ -78,7 +78,7 @@ module.exports = function (settings, mongoConfig) {
             this.status = 200;
         }
         else {
-            this.body = {result: `Account '${this.params.accountToken}' not found`};
+            this.body = {result: `Account '${this.params.toolToken}' not found`};
             this.status = 404;
         }
     }

@@ -10,9 +10,9 @@ var TokenStrategy = require('passport-auth-token').Strategy;
 
 module.exports = (url)=> {
     passport.use(new TokenStrategy(
-        function (token, done) {
-            console.log(token);
-            if (process.env.SECRET_KEY && token == process.env.SECRET_KEY) {
+        function (toolToken, done) {
+            console.log(toolToken);
+            if (process.env.SECRET_KEY && toolToken == process.env.SECRET_KEY) {
                 done(null, {type: 'system'}, {scope: 'all'});
             }
             else {
@@ -22,7 +22,7 @@ module.exports = (url)=> {
                     } else {
                         db
                             .collection('accounts')
-                            .find({accountToken: {$eq: token}})
+                            .find({toolToken: {$eq: toolToken}})
                             .limit(1)
                             .next(function (err, doc) {
                                 db.close();
