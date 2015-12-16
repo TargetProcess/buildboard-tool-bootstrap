@@ -1,5 +1,3 @@
-console.log(process.env.SECRET_KEY);
-
 var Koa = require('koa');
 var app = new Koa();
 var url = require('url');
@@ -8,8 +6,24 @@ var Mongo = require('koa-mongo');
 
 
 module.exports = {
-    bootstrap({ port, mongo, settings, methods }, securedRouterCallback)
+    bootstrap({ settings, methods }, securedRouterCallback)
     {
+        var config = require('../config-' + (process.env.NODE_ENV || 'dev') + '.json');
+
+
+        secretKey = config.secret;
+        var toolConfig = _.find(config.tools, tool=>tool.id == process.env.TOOL_ID);
+        mongo = toolConfig.mongo || {};
+        var toolUrl = url.parse(toolConfig.url);
+
+        port = parseInt(toolUrl.port || (toolUrl.protocol == "https:" ? "443" : "80"));
+
+        if (!port || !mongo || !secretKey) {
+            console.error('Invalid configuration: ');
+            console.error({port, mongo, secretKey});
+            process.exit(1);
+        }
+
         // body parser
         const bodyParser = require('koa-bodyparser');
         app.use(bodyParser());
@@ -17,7 +31,7 @@ module.exports = {
         var auth = require('./auth');
 
         const mongoUrl = mongo.url || `mongodb://${mongo.host || '127.0.0.1'}:${mongo.port || 27017}/${mongo.db}`;
-        auth(mongoUrl);
+        auth(mongoUrl, secretKey);
 
         app.use(Mongo({url: mongoUrl}));
 

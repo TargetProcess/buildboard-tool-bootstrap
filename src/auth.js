@@ -8,11 +8,14 @@ var MongoClient = require('mongodb').MongoClient;
 var TokenStrategy = require('passport-auth-token').Strategy;
 
 
-module.exports = (url)=> {
+module.exports = (url, secretKey)=> {
+    if (!secretKey) {
+        console.error('There is no secret key defined!');
+        process.exit(1);
+    }
     passport.use(new TokenStrategy(
         function (toolToken, done) {
-            console.log(toolToken);
-            if (process.env.SECRET_KEY && toolToken == process.env.SECRET_KEY) {
+            if (toolToken === secretKey) {
                 done(null, {type: 'system'}, {scope: 'all'});
             }
             else {
