@@ -14,7 +14,7 @@ module.exports = {
         var secretKey = config.secret;
         var toolId = process.env.TOOL_ID;
         var toolConfig = _.find(config.tools, tool=>tool.id == toolId);
-        mongo = toolConfig.mongo || {};
+        var mongo = _.defaults({host: '127.0.0.1', port: 27017, db: toolId}, toolConfig.mongo || {});
         var toolUrl = url.parse(toolConfig.url);
 
         port = parseInt(toolUrl.port || (toolUrl.protocol == "https:" ? "443" : "80"));
@@ -32,7 +32,7 @@ module.exports = {
 
         var auth = require('./auth');
 
-        const mongoUrl = mongo.url || `mongodb://${mongo.host || '127.0.0.1'}:${mongo.port || 27017}/${mongo.db || toolId}`;
+        const mongoUrl = mongo.url || `mongodb://${mongo.host}:${mongo.port}/${mongo.db}`;
         auth(mongoUrl, secretKey);
 
         app.use(Mongo({url: mongoUrl}));
