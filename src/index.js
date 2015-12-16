@@ -8,7 +8,7 @@ console.log(process.cwd());
 module.exports = {
     bootstrap({ settings, methods }, securedRouterCallback)
     {
-        var config = require('../../config-' + (process.env.NODE_ENV || 'dev') + '.json');
+        var config = require('./../config-' + (process.env.NODE_ENV || 'dev') + '.json');
 
 
         var secretKey = config.secret;
