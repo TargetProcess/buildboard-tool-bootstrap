@@ -11,16 +11,18 @@ module.exports = {
         var config = require('../config-' + (process.env.NODE_ENV || 'dev') + '.json');
 
 
-        secretKey = config.secret;
-        var toolConfig = _.find(config.tools, tool=>tool.id == process.env.TOOL_ID);
+        var secretKey = config.secret;
+        let toolId = process.env.TOOL_ID;
+        var toolConfig = _.find(config.tools, tool=>tool.id == toolId);
         mongo = toolConfig.mongo || {};
         var toolUrl = url.parse(toolConfig.url);
 
         port = parseInt(toolUrl.port || (toolUrl.protocol == "https:" ? "443" : "80"));
 
+        console.log({toolId, port, mongo, secretKey});
         if (!port || !mongo || !secretKey) {
             console.error('Invalid configuration: ');
-            console.error({port, mongo, secretKey});
+
             process.exit(1);
         }
 
@@ -30,7 +32,7 @@ module.exports = {
 
         var auth = require('./auth');
 
-        const mongoUrl = mongo.url || `mongodb://${mongo.host || '127.0.0.1'}:${mongo.port || 27017}/${mongo.db}`;
+        const mongoUrl = mongo.url || `mongodb://${mongo.host || '127.0.0.1'}:${mongo.port || 27017}/${mongo.db || toolId}`;
         auth(mongoUrl, secretKey);
 
         app.use(Mongo({url: mongoUrl}));
