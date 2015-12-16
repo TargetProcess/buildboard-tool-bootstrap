@@ -3,12 +3,12 @@ var app = new Koa();
 var url = require('url');
 var _ = require('lodash');
 var Mongo = require('koa-mongo');
-
+console.log(process.cwd());
 
 module.exports = {
     bootstrap({ settings, methods }, securedRouterCallback)
     {
-        var config = require('../config-' + (process.env.NODE_ENV || 'dev') + '.json');
+        var config = require('../../config-' + (process.env.NODE_ENV || 'dev') + '.json');
 
 
         var secretKey = config.secret;
