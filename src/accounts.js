@@ -67,8 +67,12 @@ module.exports = function (settings, mongoConfig) {
                 {$set: account},
                 {upsert: !this.account});
             this.body = _.omit(account, '_id');
-
-
+            if (this.account) {
+                settings.account.onUpdate(account, this.account);
+            }
+            else {
+                settings.account.onCreate(account);
+            }
         }
     }
 
@@ -77,6 +81,7 @@ module.exports = function (settings, mongoConfig) {
             yield this.accountsCollection.deleteOne({_id: this.account._id});
             this.body = {result: 'deleted'};
             this.status = 200;
+            settings.account.onDelete(this.account);
         }
         else {
             this.body = {error: [`Account '${this.params.toolToken}' not found`]};
