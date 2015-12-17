@@ -4,25 +4,33 @@ var url = require('url');
 var _ = require('lodash');
 var Mongo = require('koa-mongo');
 
+function readGeneralSettings(id) {
+    var config = require(process.cwd() + '/../config-' + (process.env.NODE_ENV || 'dev') + '.json');
+
+    var secretKey = config.secret;
+
+    var toolConfig = _.find(config.tools, tool=>tool.id == id);
+    var mongo = _.defaults(toolConfig.mongo || {}, {host: '127.0.0.1', port: 27017, db: id});
+    var toolUrl = url.parse(toolConfig.url);
+
+    var port = parseInt(toolUrl.port || (toolUrl.protocol == "https:" ? "443" : "80"));
+
+    var generalSettings = {id, port, mongo, secretKey, url: toolConfig.url, buildbordUrl: config.url};
+
+
+    console.log(generalSettings);
+    if (!port || !mongo || !secretKey) {
+        console.error('Invalid configuration: ');
+
+        process.exit(1);
+    }
+    return generalSettings;
+}
 module.exports = {
     bootstrap({id, settings, methods, account }, securedRouterCallback)
     {
-        var config = require(process.cwd() + '/../config-' + (process.env.NODE_ENV || 'dev') + '.json');
-
-
-        var secretKey = config.secret;
-        var toolConfig = _.find(config.tools, tool=>tool.id == id);
-        var mongo = _.defaults(toolConfig.mongo || {}, {host: '127.0.0.1', port: 27017, db: id});
-        var toolUrl = url.parse(toolConfig.url);
-
-        port = parseInt(toolUrl.port || (toolUrl.protocol == "https:" ? "443" : "80"));
-
-        console.log({id, port, mongo, secretKey});
-        if (!port || !mongo || !secretKey) {
-            console.error('Invalid configuration: ');
-
-            process.exit(1);
-        }
+        const generalSettings = readGeneralSettings(id);
+        const mongo = generalSettings.mongo;
 
         // body parser
         const bodyParser = require('koa-bodyparser');
@@ -31,7 +39,8 @@ module.exports = {
         var auth = require('./auth');
 
         const mongoUrl = mongo.url || `mongodb://${mongo.host}:${mongo.port}/${mongo.db}`;
-        auth(mongoUrl, secretKey);
+
+        auth(mongoUrl, generalSettings.secretKey);
 
         app.use(Mongo({url: mongoUrl}));
 
@@ -92,7 +101,8 @@ module.exports = {
 
         if (securedRouterCallback) {
             securedRouterCallback({
-                router: securedRouter
+                router: securedRouter,
+                generalSettings
             });
         }
 
@@ -106,7 +116,9 @@ module.exports = {
             .use(securedRouter.routes())
             .use(securedRouter.allowedMethods());
 
-        app.listen(port);
+        app.listen(generalSettings.port);
+
+        return generalSettings;
 
     },
     getUrl(ctx)
