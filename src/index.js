@@ -13,7 +13,7 @@ module.exports = {
 
         var secretKey = config.secret;
         var toolConfig = _.find(config.tools, tool=>tool.id == id);
-        var mongo = _.defaults({host: '127.0.0.1', port: 27017, db: id}, toolConfig.mongo || {});
+        var mongo = _.defaults(toolConfig.mongo || {}, {host: '127.0.0.1', port: 27017, db: id});
         var toolUrl = url.parse(toolConfig.url);
 
         port = parseInt(toolUrl.port || (toolUrl.protocol == "https:" ? "443" : "80"));
