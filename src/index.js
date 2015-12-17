@@ -5,7 +5,7 @@ var _ = require('lodash');
 var Mongo = require('koa-mongo');
 
 module.exports = {
-    bootstrap({id, settings, methods }, securedRouterCallback)
+    bootstrap({id, settings, methods, account }, securedRouterCallback)
     {
         var config = require(process.cwd() + '/../config-' + (process.env.NODE_ENV || 'dev') + '.json');
 
@@ -23,9 +23,6 @@ module.exports = {
 
             process.exit(1);
         }
-
-        settings.account = _.defaults(settings.account || {}, {onCreate: _.noop, onUpdate: _.noop, onDelete: _.noop});
-
 
         // body parser
         const bodyParser = require('koa-bodyparser');
@@ -90,7 +87,7 @@ module.exports = {
 
         var securedRouter = new Router();
 
-        var accountController = require('./accounts')(settings, mongo);
+        var accountController = require('./accounts')(settings, mongo, account);
         accountController.setupRoutes(securedRouter);
 
         if (securedRouterCallback) {

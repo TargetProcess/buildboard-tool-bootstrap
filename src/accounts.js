@@ -1,7 +1,11 @@
 var validateSettings = require('./validateSettings').validateSettings;
 var _ = require('lodash');
 
-module.exports = function (settings, mongoConfig) {
+module.exports = function (settings, mongoConfig, accountCallbacks) {
+
+
+    accountCallbacks = _.defaults(accountCallbacks || {}, {onCreate: _.noop, onUpdate: _.noop, onDelete: _.noop});
+
 
 
     return {
@@ -68,10 +72,10 @@ module.exports = function (settings, mongoConfig) {
                 {upsert: !this.account});
             this.body = _.omit(account, '_id');
             if (this.account) {
-                settings.account.onUpdate(account, this.account);
+                accountCallbacks.onUpdate(account, this.account);
             }
             else {
-                settings.account.onCreate(account);
+                accountCallbacks.onCreate(account);
             }
         }
     }
@@ -81,7 +85,7 @@ module.exports = function (settings, mongoConfig) {
             yield this.accountsCollection.deleteOne({_id: this.account._id});
             this.body = {result: 'deleted'};
             this.status = 200;
-            settings.account.onDelete(this.account);
+            accountCallbacks.onDelete(this.account);
         }
         else {
             this.body = {error: [`Account '${this.params.toolToken}' not found`]};
