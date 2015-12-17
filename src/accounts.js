@@ -7,7 +7,6 @@ module.exports = function (settings, mongoConfig) {
     return {
         setupRoutes(router){
             router
-                .post('/account/validate')
                 .get('/account/:toolToken', checkSystemPassport, getAccount, get)
                 .post('/account/:toolToken', checkSystemPassport, getAccount, createOrUpdate)
                 .delete('/account/:toolToken', checkSystemPassport, getAccount, deleteAccount)
@@ -45,7 +44,7 @@ module.exports = function (settings, mongoConfig) {
             this.body = _.omit(this.account, '_id');
         }
         else {
-            this.body = {result: `Account '${this.params.toolToken}' not found`};
+            this.body = {error: [`Account '${this.params.toolToken}' not found`]};
             this.status = 404;
         }
     }
@@ -78,7 +77,7 @@ module.exports = function (settings, mongoConfig) {
             this.status = 200;
         }
         else {
-            this.body = {result: `Account '${this.params.toolToken}' not found`};
+            this.body = {error: [`Account '${this.params.toolToken}' not found`]};
             this.status = 404;
         }
     }
