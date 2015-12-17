@@ -15,7 +15,7 @@ function readGeneralSettings(id) {
 
     var port = parseInt(toolUrl.port || (toolUrl.protocol == "https:" ? "443" : "80"));
 
-    var generalSettings = {id, port, mongo, secretKey, url: toolConfig.url, buildbordUrl: config.url};
+    var generalSettings = {id, port, mongo, secretKey, url: toolConfig.url, buildboardUrl: config.url};
 
 
     console.log(generalSettings);
