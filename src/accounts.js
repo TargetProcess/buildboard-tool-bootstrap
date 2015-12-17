@@ -70,22 +70,25 @@ module.exports = function (settings, mongoConfig, accountCallbacks) {
             yield this.accountsCollection.updateOne({toolToken: this.params.toolToken},
                 {$set: account},
                 {upsert: !this.account});
-            this.body = _.omit(account, '_id');
+
             if (this.account) {
-                accountCallbacks.onUpdate(account, this.account);
+                yield accountCallbacks.onUpdate(account, this.account);
             }
             else {
-                accountCallbacks.onCreate(account);
+                yield accountCallbacks.onCreate(account);
             }
+            this.body = _.omit(account, '_id');
+
         }
     }
 
     function *deleteAccount() {
         if (this.account) {
             yield this.accountsCollection.deleteOne({_id: this.account._id});
+            yield accountCallbacks.onDelete(this.account);
             this.body = {result: 'deleted'};
             this.status = 200;
-            accountCallbacks.onDelete(this.account);
+
         }
         else {
             this.body = {error: [`Account '${this.params.toolToken}' not found`]};
