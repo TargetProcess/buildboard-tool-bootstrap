@@ -3,7 +3,6 @@ var app = new Koa();
 var url = require('url');
 var _ = require('lodash');
 var Mongo = require('koa-mongo');
-console.log(process.cwd());
 
 module.exports = {
     bootstrap({id, settings, methods }, securedRouterCallback)
@@ -24,6 +23,9 @@ module.exports = {
 
             process.exit(1);
         }
+
+        settings.account = _.defaults(settings.account || {}, {onCreate: _.noop, onUpdate: _.noop, onDelete: _.noop});
+
 
         // body parser
         const bodyParser = require('koa-bodyparser');

@@ -67,6 +67,8 @@ module.exports = function (settings, mongoConfig) {
                 {$set: account},
                 {upsert: !this.account});
             this.body = _.omit(account, '_id');
+
+
         }
     }
 
