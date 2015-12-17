@@ -7,7 +7,6 @@ module.exports = function (settings, mongoConfig, accountCallbacks) {
     accountCallbacks = _.defaults(accountCallbacks || {}, {onCreate: _.noop, onUpdate: _.noop, onDelete: _.noop});
 
 
-
     return {
         setupRoutes(router){
             router
@@ -62,7 +61,8 @@ module.exports = function (settings, mongoConfig, accountCallbacks) {
         }
         else {
             this.status = this.account ? 200 : 201;
-            var account = _.assign(this.account || {}, {
+            var account = _.cloneDeep(this.account || {});
+            account = _.assign(account, {
                 name: this.request.body.name,
                 toolToken: this.params.toolToken,
                 config: accountConfig
