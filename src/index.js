@@ -26,6 +26,15 @@ function readGeneralSettings(id) {
     }
     return generalSettings;
 }
+function getMongoUrl(mongo) {
+    if (mongo.url) {
+        return mongo.url;
+    }
+    else {
+        var auth = mongo.user && mongo.password ? `${mongo.user}:${mongo.passport}@` : '';
+        return `mongodb://${auth}${mongo.host}:${mongo.port}/${mongo.db}`;
+    }
+}
 module.exports = {
     bootstrap({id, settings, methods, account }, securedRouterCallback)
     {
@@ -38,7 +47,8 @@ module.exports = {
 
         var auth = require('./auth');
 
-        const mongoUrl = mongo.url || `mongodb://${mongo.host}:${mongo.port}/${mongo.db}`;
+
+        var mongoUrl = getMongoUrl(mongo);
 
         auth(mongoUrl, generalSettings.secretKey);
 
