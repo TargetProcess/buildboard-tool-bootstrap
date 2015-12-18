@@ -26,6 +26,7 @@ function readGeneralSettings(id) {
     }
     return generalSettings;
 }
+
 function getMongoUrl(mongo) {
     if (mongo.url) {
         return mongo.url;
@@ -35,6 +36,7 @@ function getMongoUrl(mongo) {
         return `mongodb://${auth}${mongo.host}:${mongo.port}/${mongo.db}`;
     }
 }
+
 module.exports = {
     bootstrap({id, settings, methods, account }, securedRouterCallback)
     {
@@ -105,6 +107,10 @@ module.exports = {
         });
 
         var securedRouter = new Router();
+
+        if (_.isFunction(account)) {
+            account = account({generalSettings});
+        }
 
         var accountController = require('./accounts')(settings, mongo, account);
         accountController.setupRoutes(securedRouter);

@@ -67,16 +67,17 @@ module.exports = function (settings, mongoConfig, accountCallbacks) {
                 toolToken: this.params.toolToken,
                 config: accountConfig
             });
+            if (this.account) {
+                account = yield accountCallbacks.onUpdate(account, this.account) || account;
+            }
+            else {
+                account = yield accountCallbacks.onCreate(account) || account;
+            }
+
             yield this.accountsCollection.updateOne({toolToken: this.params.toolToken},
                 {$set: account},
                 {upsert: !this.account});
 
-            if (this.account) {
-                yield accountCallbacks.onUpdate(account, this.account);
-            }
-            else {
-                yield accountCallbacks.onCreate(account);
-            }
             this.body = _.omit(account, '_id');
 
         }
@@ -84,8 +85,8 @@ module.exports = function (settings, mongoConfig, accountCallbacks) {
 
     function *deleteAccount() {
         if (this.account) {
-            yield this.accountsCollection.deleteOne({_id: this.account._id});
             yield accountCallbacks.onDelete(this.account);
+            yield this.accountsCollection.deleteOne({_id: this.account._id});
             this.body = {result: 'deleted'};
             this.status = 200;
 
