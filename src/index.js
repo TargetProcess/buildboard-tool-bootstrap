@@ -32,7 +32,7 @@ function getMongoUrl(mongo) {
         return mongo.url;
     }
     else {
-        var auth = mongo.user && mongo.password ? `${mongo.user}:${mongo.passport}@` : '';
+        var auth = (mongo.user && mongo.password) ? `${mongo.user}:${mongo.password}@` : '';
         return `mongodb://${auth}${mongo.host}:${mongo.port}/${mongo.db}`;
     }
 }
