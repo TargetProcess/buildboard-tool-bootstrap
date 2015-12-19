@@ -41,20 +41,14 @@ module.exports = {
     bootstrap({id, settings, methods, account }, securedRouterCallback)
     {
         const generalSettings = readGeneralSettings(id);
-        const mongo = generalSettings.mongo;
+        var mongoUrl = getMongoUrl(generalSettings.mongo);
 
-        // body parser
-        const bodyParser = require('koa-bodyparser');
-        app.use(bodyParser());
+        app.use(require('koa-bodyparser')());
+        app.use(Mongo({url: mongoUrl}));
 
         var auth = require('./auth');
-
-
-        var mongoUrl = getMongoUrl(mongo);
-
         auth(mongoUrl, generalSettings.secretKey);
 
-        app.use(Mongo({url: mongoUrl}));
 
         const passport = require('koa-passport');
         app.use(passport.initialize());
@@ -67,7 +61,6 @@ module.exports = {
 
 
         var Router = require('koa-router');
-
 
         var unsecuredRouter = new Router();
 
@@ -112,7 +105,7 @@ module.exports = {
             account = account({generalSettings});
         }
 
-        var accountController = require('./accounts')(settings, mongo, account);
+        var accountController = require('./accounts')(settings, generalSettings.mongo, account);
         accountController.setupRoutes(securedRouter);
 
         if (securedRouterCallback) {
@@ -124,7 +117,7 @@ module.exports = {
 
         _.each(methods, (method, methodName)=> {
             _.each(method, (config, action)=> {
-                securedRouter[action](methodName, config.action)
+                securedRouter[action]('/' + methodName, config.action)
             });
         });
 
