@@ -8,7 +8,6 @@
   "author": "Taucraft",
   "license": "ISC",
   "dependencies": {
-    "chai": "^3.4.1",
     "kerberos": "0.0.17",
     "koa": "^1.1.2",
     "koa-bodyparser": "^2.0.1",
@@ -32,11 +31,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/buildboard/tool-bootstrap.git"
+    "url": "git+https://github.com/buildboard/buildboard-tool-bootstrap.git"
   },
   "bugs": {
-    "url": "https://github.com/buildboard/tool-bootstrap/issues"
+    "url": "https://github.com/buildboard/buildboard-tool-bootstrap/issues"
   },
-  "homepage": "https://github.com/buildboard/tool-bootstrap#readme",
+  "homepage": "https://github.com/buildboard/buildboard-tool-bootstrap#readme",
   "description": ""
 }
