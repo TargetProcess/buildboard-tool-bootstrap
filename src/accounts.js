@@ -68,10 +68,12 @@ module.exports = function (settings, mongoConfig, accountCallbacks) {
                 config: accountConfig
             });
             if (this.account) {
-                account = yield accountCallbacks.onUpdate(account, this.account) || account;
+                let updatedAccount = yield accountCallbacks.onUpdate(account, this.account);
+                account = updatedAccount || account;
             }
             else {
-                account = yield accountCallbacks.onCreate(account) || account;
+                let updatedAccount = yield accountCallbacks.onCreate(account);
+                account = updatedAccount || account;
             }
 
             console.log(account);
