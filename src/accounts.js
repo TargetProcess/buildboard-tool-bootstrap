@@ -74,7 +74,6 @@ module.exports = function (settings, mongoConfig, accountCallbacks) {
                 account = (yield accountCallbacks.onCreate(account)) || account;
             }
 
-            console.log(account);
             yield this.accountsCollection.updateOne({toolToken: this.params.toolToken},
                 {$set: account},
                 {upsert: !this.account});

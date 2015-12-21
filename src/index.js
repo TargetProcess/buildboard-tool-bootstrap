@@ -117,7 +117,6 @@ module.exports = {
 
         _.each(methods, (method, methodName)=> {
             _.each(method, (config, action)=> {
-                console.log({action, methodName});
                 securedRouter[action]('/' + methodName, config.action)
             });
         });
