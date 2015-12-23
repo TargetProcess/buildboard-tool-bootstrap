@@ -38,6 +38,16 @@ function getMongoUrl(mongo) {
 module.exports = {
     bootstrap({id, settings, methods, account}, securedRouterCallback)
     {
+        account = account || function () {
+                return {
+                    *onCreate(account){
+                    },
+                    *onUpdate(account, oldAccount){
+                    },
+                    *onDelete(account){
+                    }
+                };
+            };
         const generalSettings = readGeneralSettings(id);
         var mongoUrl = getMongoUrl(generalSettings.mongo);
 
