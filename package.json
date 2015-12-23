@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "src/index.js",
   "scripts": {
-    "test": "mocha --harmony_destructuring test/**/*.js"
+    "jscs": "jscs ./ --config=./.jscsrc --reporter=console",
+    "jscsfix": "jscs ./ --config=./.jscsrc --reporter=console --fix",
+    "test": "npm run jscs && mocha --harmony_destructuring test/**/*.js"
   },
   "author": "Taucraft",
   "license": "ISC",
@@ -24,7 +26,8 @@
   },
   "devDependencies": {
     "chai": "^3.4.1",
-    "mocha": "^2.3.4"
+    "mocha": "^2.3.4",
+    "jscs": "^2.7.0"
   },
   "directories": {
     "test": "test"

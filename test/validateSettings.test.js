@@ -1,6 +1,6 @@
-var expect = require("chai").expect;
+var expect = require('chai').expect;
 
-var validateSettings = require("../src/validateSettings").validateSettings;
+var validateSettings = require('../src/validateSettings').validateSettings;
 describe('tool-bootstrap', ()=> {
     describe('Validate Settings', function () {
         it('should validate simple types', ()=> {
@@ -10,10 +10,10 @@ describe('tool-bootstrap', ()=> {
             };
             expect(
                 validateSettings({
-                    'string': {
+                    string: {
                         type: 'string'
                     },
-                    'list': {
+                    list: {
                         type: 'list'
                     }
                 }, settings).next().value)
@@ -25,7 +25,7 @@ describe('tool-bootstrap', ()=> {
             };
             expect(
                 validateSettings({
-                    'url': {
+                    url: {
                         type: 'uri'
                     }
                 }, settings).next().value)
@@ -39,10 +39,10 @@ describe('tool-bootstrap', ()=> {
                 url: {type: 'uri'}
             }, settings).next().value)
                 .to.be.eql({
-                "error": [
-                    "'url' has invalid type, should be uri"
+                error: [
+                    '\'url\' has invalid type, should be uri'
                 ]
-            })
-        })
-    })
+            });
+        });
+    });
 });

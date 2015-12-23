@@ -1,8 +1,8 @@
 const _ = require('lodash');
 
 var validators = {
-    'string': _.isString,
-    'list': _.isArray,
+    string: _.isString,
+    list: _.isArray,
     'multiple selection': (value, config)=> {
         if (!_.isArray(value)) {
             return false;
@@ -13,12 +13,12 @@ var validators = {
         }
         return true;
     },
-    'uri': value=>_.isString(value) && (value.indexOf('http://') == 0 || value.indexOf('https://') == 0)
+    uri: value=>_.isString(value) && (value.indexOf('http://') == 0 || value.indexOf('https://') == 0)
 };
 
 module.exports = {
     validators,
-    *validateSettings (settingsInfo, settings) {
+    *validateSettings(settingsInfo, settings) {
         var customValidation = _.isFunction(settingsInfo.validation) && settingsInfo.validation;
 
         if (!_.isArray(settingsInfo)) {
@@ -44,13 +44,12 @@ module.exports = {
                 }
                 var validator = validators[config.type];
                 if (!validator) {
-                    return `Unknown type ${config.type} for ${id}`
+                    return `Unknown type ${config.type} for ${id}`;
                 }
                 var validationResult = validator(value, config);
                 if (validationResult === false) {
                     return `'${id}' has invalid type, should be ${config.type}`;
-                }
-                else if (_.isString(validationResult)) {
+                } else if (_.isString(validationResult)) {
                     return validationResult;
                 }
 
@@ -58,16 +57,14 @@ module.exports = {
             .compact()
             .value();
 
-
         if (error.length !== 0) {
             return {error};
         }
 
-
         if (customValidation) {
             var customValidationResult = yield customValidation(settings);
             if (customValidationResult !== true) {
-                return {error: customValidationResult.error || ['Tool validation failed']}
+                return {error: customValidationResult.error || ['Tool validation failed']};
             }
         }
 

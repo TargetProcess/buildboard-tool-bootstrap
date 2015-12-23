@@ -3,16 +3,14 @@ var _ = require('lodash');
 
 module.exports = function (settings, mongoConfig, accountCallbacks) {
 
-
     accountCallbacks = _.defaults(accountCallbacks || {}, {onCreate: _.noop, onUpdate: _.noop, onDelete: _.noop});
-
 
     return {
         setupRoutes(router){
             router
                 .get('/account/:toolToken', checkSystemPassport, getAccount, get)
                 .post('/account/:toolToken', checkSystemPassport, getAccount, createOrUpdate)
-                .delete('/account/:toolToken', checkSystemPassport, getAccount, deleteAccount)
+                .delete('/account/:toolToken', checkSystemPassport, getAccount, deleteAccount);
 
         }
     };
@@ -20,10 +18,9 @@ module.exports = function (settings, mongoConfig, accountCallbacks) {
     function *checkSystemPassport(next) {
         if (this.passport.user.type == 'system') {
             yield next;
-        }
-        else {
+        } else {
             this.status = 403;
-            this.body = {success: false}
+            this.body = {success: false};
         }
     }
 
@@ -41,25 +38,21 @@ module.exports = function (settings, mongoConfig, accountCallbacks) {
         yield next;
     }
 
-
     function *get() {
         if (this.account) {
             this.body = _.omit(this.account, '_id');
-        }
-        else {
+        } else {
             this.body = {error: [`Account '${this.params.toolToken}' not found`]};
             this.status = 404;
         }
     }
-
 
     function *createOrUpdate() {
         var {error,accountConfig} = yield validateSettings(settings, this.request.body.config);
         if (error) {
             this.status = 400;
             this.body = error;
-        }
-        else {
+        } else {
             this.status = this.account ? 200 : 201;
             var account = _.cloneDeep(this.account || {});
             account = _.assign(account, {
@@ -69,8 +62,7 @@ module.exports = function (settings, mongoConfig, accountCallbacks) {
             });
             if (this.account) {
                 account = (yield accountCallbacks.onUpdate(account, this.account)) || account;
-            }
-            else {
+            } else {
                 account = (yield accountCallbacks.onCreate(account)) || account;
             }
 
@@ -90,12 +82,10 @@ module.exports = function (settings, mongoConfig, accountCallbacks) {
             this.body = {result: 'deleted'};
             this.status = 200;
 
-        }
-        else {
+        } else {
             this.body = {error: [`Account '${this.params.toolToken}' not found`]};
             this.status = 404;
         }
     }
-
 
 };

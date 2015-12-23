@@ -13,10 +13,9 @@ function readGeneralSettings(id) {
     var mongo = _.defaults(toolConfig.mongo || {}, {host: '127.0.0.1', port: 27017, db: id});
     var toolUrl = url.parse(toolConfig.url);
 
-    var port = parseInt(toolUrl.port || (toolUrl.protocol == "https:" ? "443" : "80"));
+    var port = parseInt(toolUrl.port || (toolUrl.protocol == 'https:' ? '443' : '80'));
 
     var generalSettings = {id, port, mongo, secretKey, url: toolConfig.url, buildboardUrl: config.url};
-
 
     console.log(generalSettings);
     if (!port || !mongo || !secretKey) {
@@ -30,15 +29,14 @@ function readGeneralSettings(id) {
 function getMongoUrl(mongo) {
     if (mongo.url) {
         return mongo.url;
-    }
-    else {
+    } else {
         var auth = (mongo.user && mongo.password) ? `${mongo.user}:${mongo.password}@` : '';
         return `mongodb://${auth}${mongo.host}:${mongo.port}/${mongo.db}`;
     }
 }
 
 module.exports = {
-    bootstrap({id, settings, methods, account }, securedRouterCallback)
+    bootstrap({id, settings, methods, account}, securedRouterCallback)
     {
         const generalSettings = readGeneralSettings(id);
         var mongoUrl = getMongoUrl(generalSettings.mongo);
@@ -49,7 +47,6 @@ module.exports = {
         var auth = require('./auth');
         auth(mongoUrl, generalSettings.secretKey);
 
-
         const passport = require('koa-passport');
         app.use(passport.initialize());
 
@@ -59,7 +56,6 @@ module.exports = {
         app.use(json());
         app.use(logger());
 
-
         var Router = require('koa-router');
 
         var unsecuredRouter = new Router();
@@ -68,21 +64,22 @@ module.exports = {
             this.body = {
                 settings,
                 methods
-            }
+            };
         });
-
 
         app.use(unsecuredRouter.routes());
 
         app.use(function*(next) {
             var ctx = this;
-            yield passport.authenticate("authtoken",
+            yield passport.authenticate('authtoken',
                 {session: true},
                 function*(err, user) {
-                    if (err) throw err;
+                    if (err) {
+                        throw err;
+                    }
                     if (user === false) {
                         ctx.status = 401;
-                        ctx.body = {success: false, error: 'Authentication fails. Unknown tool token.'}
+                        ctx.body = {success: false, error: 'Authentication fails. Unknown tool token.'};
                     } else {
                         yield ctx.login(user);
                         yield next;
@@ -93,9 +90,9 @@ module.exports = {
 
         app.use(function*(next) {
             if (this.isAuthenticated()) {
-                yield next
+                yield next;
             } else {
-                this.redirect('/')
+                this.redirect('/');
             }
         });
 
@@ -117,7 +114,7 @@ module.exports = {
 
         _.each(methods, (method, methodName)=> {
             _.each(method, (config, action)=> {
-                securedRouter[action]('/' + methodName, config.action)
+                securedRouter[action]('/' + methodName, config.action);
             });
         });
 
