@@ -18,8 +18,7 @@ var validators = {
         try {
             new RegExp(value);
             return true;
-        }
-        catch (e) {
+        } catch (e) {
             return false;
         }
     }
