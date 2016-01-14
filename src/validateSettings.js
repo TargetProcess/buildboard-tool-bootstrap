@@ -13,7 +13,16 @@ var validators = {
         }
         return true;
     },
-    uri: value=>_.isString(value) && (value.indexOf('http://') == 0 || value.indexOf('https://') == 0)
+    uri: value=>_.isString(value) && (value.indexOf('http://') == 0 || value.indexOf('https://') == 0),
+    regex: value=> {
+        try {
+            new RegExp(value);
+            return true;
+        }
+        catch (e) {
+            return false;
+        }
+    }
 };
 
 module.exports = {
@@ -35,7 +44,11 @@ module.exports = {
             .map(config=> {
                 var id = config.id;
                 var value = settings[id];
-                if (!value) {
+                if (_.isUndefined(value))
+                {
+                    value = settings[id] = config.defaultValue;
+                }
+                if (_.isUndefined(value)) {
                     if (config.optional) {
                         return;
                     } else {

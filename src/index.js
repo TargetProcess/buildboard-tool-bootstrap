@@ -122,9 +122,9 @@ module.exports = {
             });
         }
 
-        _.each(methods, (method, methodName)=> {
-            _.each(method, (config, action)=> {
-                securedRouter[action]('/' + methodName, config.action);
+        _.each(methods, (methodConfig, methodName)=> {
+            _.each(methodConfig, (actionConfig, verb)=> {
+                securedRouter[verb]('/' + methodName, actionConfig.action);
             });
         });
 
