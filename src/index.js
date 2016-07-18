@@ -16,14 +16,18 @@ function readGeneralSettings(id) {
     var port = parseInt(toolUrl.port || (toolUrl.protocol == 'https:' ? '443' : '80'));
 
     var generalSettings = {id, port, mongo, secretKey, url: toolConfig.url, buildboardUrl: config.url};
+    return generalSettings;
+}
 
-    console.log(generalSettings);
+function validateToolSettings({id, port, mongo, secretKey, url, buildboardUrl}) {
     if (!port || !mongo || !secretKey) {
         console.error('Invalid configuration: ');
-
+        console.log(arguments);
         process.exit(1);
     }
-    return generalSettings;
+}
+function logToolSettings(generalSettings) {
+    console.log(generalSettings);
 }
 
 function getMongoUrl(mongo) {
@@ -36,7 +40,7 @@ function getMongoUrl(mongo) {
 }
 
 module.exports = {
-    bootstrap({id, settings, methods, account}, securedRouterCallback)
+    bootstrap({id, settings, toolSettings = null, methods, account}, securedRouterCallback)
     {
         account = account || function () {
                 return {
@@ -48,7 +52,11 @@ module.exports = {
                     }
                 };
             };
-        const generalSettings = readGeneralSettings(id);
+        const generalSettings = toolSettings || readGeneralSettings(id);
+        
+        validateToolSettings(generalSettings);
+        logToolSettings(generalSettings); //Todo use morgan or other logs library 
+        
         var mongoUrl = getMongoUrl(generalSettings.mongo);
 
         app.use(require('koa-bodyparser')());
